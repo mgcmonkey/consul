@@ -1,0 +1,60 @@
+1、实现Command 接口（mitchellh 框架，米切尔框架）
+2、struct 包含的信息，版本信息，命令参数（依赖于flags模块），关闭通道，日志信息
+3、扩展方法   无
+4、私有方法 
+	init 初始化命令选项，初始化命令帮助文档
+	readCofing
+	checkpointResults
+	startUpUpdateCheck
+	startupJoin
+	run
+	handleReload
+常量：
+synopsis
+help
+
+
+几个关键的东西
+广播
+rpc
+检查
+》》》》状态复制
+查询
+@更新
+
+代理（proxy）
+通知
+
+
+
+本地状态关注的内容：本地配置（广播地址 默认和 bind 地址一致，是和其他节点广播的地址，
+	，检查更新间隔时间，数据中心，nodeid，nodename
+	TaggedAddresses（标记地址），代理绑定端口）
+	，日志，注册的服务状态，检查，别名检查，元数据，token	
+	通知处理器
+	代理
+
+
+每个client 拥有一个连接池，consul配置，事件通道等。
+client rpc 调用限制
+ACL 访问控制
+成员列表是通过serf 来处理存储的，
+	字段members map[string]*memberState
+	queryResponse 查询响应 map[LamportTime]*QueryResponse
+	state 当前状态---四种状态，活动，正在离开，离开，关闭
+		const (
+			SerfAlive SerfState = iota
+			SerfLeaving
+			SerfLeft
+			SerfShutdown
+			)
+	tags
+	event
+serf 启动时启动的任务
+	服务收集处理 -- periodically reaps the list of failed and left members, as well as old buffered intents.
+	重连 ----尝试重连失败节点--发送本地状态信息和成员信息到失联节点，如果从新找回失联节点，则获取失联节点信息
+		pushpull过程，需要（网络）三次 往返---随机在失败的节点中选择重连
+	内置广播，例如成员加入，成员离开，成员节点关闭等，检查队列深度
+	用户事件，检查队列深度
+	用户查询，检查队列深度
+	尝试重新加入集群--前提是，数据快照中存在活动的节点
