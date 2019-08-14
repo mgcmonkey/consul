@@ -58,3 +58,32 @@ serf 启动时启动的任务
 	用户事件，检查队列深度
 	用户查询，检查队列深度
 	尝试重新加入集群--前提是，数据快照中存在活动的节点
+
+agent 启动内容：
+子对象 sync，State
+1、加载token
+2、创建本地状态
+3、状态同步器
+4、创建缓存
+5、创建或获取consul配置
+6、tlsConfigurator
+7、创建Server/Client 为agent的 delegate
+8、创建获取集群大小函数
+9、a.State.Delegate = a.delegate，a.State.TriggerSyncChanges = a.sync.SyncChanges.Trigger
+10、初测缓存
+11、加密处理
+12、加载服务，loadServices，loadProxies，加载检查loadChecks，加载元数据loadMetadata
+13、创建代理配置管理器（Manager）--启动状态同步goroutine--线程
+14、启动代理服务-----proxy的State 来自 agent.State
+		通知处理器
+		启动状态同步
+15、处理上时间运行的服务，并关闭
+16、启动用户事件进程
+17、如果网络坐标没有关闭，则发送网络坐标岛服务器
+18、存储PId文件
+19、启动DNS服务
+20、创建监听器--但是未启动服务器
+21、启动http或者https服务器---由20步产生---全部添加到agent的httpServers数组了a.serveHTTP
+22、创建了gRPC服务器listenAndServeGRPC
+23、注册监听器a.reloadWatches(a.config)
+24、启动创建try Join Lan Wan
